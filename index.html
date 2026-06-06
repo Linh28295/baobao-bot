@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bao Bao — Just-in-Case Assurance</title>
+<style>
+  :root{color-scheme:light;
+    --wine:#8B0000;--wine-d:#6d0000;--wine-soft:#f3e1e1;--ink:#1f2328;--muted:#6b7178;
+    --line:#e6e3df;--bg:#faf8f6;--card:#fff;--bot:#f6eef0;--good:#1a7f4b;--good-bg:#e6f4ec;}
+  *{box-sizing:border-box;}
+  body{font-family:'Segoe UI',-apple-system,system-ui,Arial,sans-serif;color:var(--ink);background:var(--bg);margin:0;padding:16px;}
+  .wrap{max-width:760px;margin:0 auto;}
+  .app{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.06);display:flex;flex-direction:column;height:86vh;min-height:560px;}
+  .hd{background:linear-gradient(135deg,var(--wine),var(--wine-d));color:#fff;padding:13px 18px;display:flex;align-items:center;gap:10px;}
+  .avatar{width:44px;height:44px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+  .hd .t{font-weight:700;font-size:15px;}
+  .hd .s{font-size:11.5px;opacity:.92;margin-top:2px;}
+  .hd .grow{flex:1;min-width:0;}
+  .dot{width:8px;height:8px;border-radius:50%;background:#5bd07a;display:inline-block;margin-right:5px;vertical-align:middle;}
+  .live{font-size:10px;background:rgba(255,255,255,.22);padding:1px 7px;border-radius:9px;margin-left:6px;}
+  .hbtn{background:rgba(255,255,255,.18);border:none;color:#fff;font-size:15px;border-radius:10px;padding:6px 10px;cursor:pointer;flex-shrink:0;}
+  .hbtn:hover{background:rgba(255,255,255,.32);}
+  .langs{display:flex;background:rgba(255,255,255,.18);border-radius:18px;padding:3px;gap:2px;flex-shrink:0;}
+  .lang{font-size:11.5px;font-weight:700;color:#fff;opacity:.65;border:none;background:transparent;border-radius:14px;padding:4px 11px;cursor:pointer;}
+  .lang.on{background:#fff;color:var(--wine);opacity:1;}
+  .kri{display:none;background:#fff;border-bottom:1px solid var(--line);padding:12px 18px;}
+  .kri.show{display:block;}
+  .kri h4{margin:0 0 8px;font-size:12px;color:var(--wine);text-transform:uppercase;letter-spacing:.5px;}
+  .kgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .kpi{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;}
+  .kpi .l{font-size:10px;color:var(--muted);text-transform:uppercase;}
+  .kpi .v{font-size:16px;font-weight:700;}
+  .kri .note2{font-size:10px;color:var(--muted);margin-top:7px;font-style:italic;}
+  .chat{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;background:var(--bg);}
+  .row{display:flex;gap:8px;max-width:92%;}
+  .row.bot{align-self:flex-start;} .row.user{align-self:flex-end;flex-direction:row-reverse;}
+  .av2{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+  .av2.b{background:#fff;border:1px solid var(--line);} .av2.u{background:var(--wine);color:#fff;font-size:11px;font-weight:600;}
+  .bub{padding:10px 13px;border-radius:14px;font-size:13.5px;line-height:1.5;white-space:pre-wrap;max-width:100%;overflow-x:auto;}
+  .bot .bub{background:var(--bot);border:1px solid var(--line);border-top-left-radius:4px;}
+  .user .bub{background:var(--wine);color:#fff;border-top-right-radius:4px;}
+  .bub b{font-weight:600;} .mini{font-size:11px;color:var(--muted);}
+  .bub table{border-collapse:collapse;font-size:12px;margin:6px 0;white-space:normal;}
+  .bub td,.bub th{border:1px solid var(--line);padding:4px 8px;text-align:left;vertical-align:top;background:#fff;}
+  .bub th{background:var(--wine-soft);color:var(--wine);font-weight:600;}
+  .chk{list-style:none;margin:6px 0;padding:0;white-space:normal;}
+  .chk li{margin:4px 0;padding-left:22px;position:relative;}
+  .chk li:before{content:"☐";position:absolute;left:2px;color:var(--wine);}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;padding:10px 18px;border-top:1px solid var(--line);background:var(--card);}
+  .chip{font-size:12px;border:1px solid var(--wine);color:var(--wine);background:#fff;border-radius:16px;padding:5px 11px;cursor:pointer;}
+  .chip:hover{background:var(--wine);color:#fff;}
+  .inbar{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:var(--card);}
+  .inbar input{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 13px;font-size:13.5px;font-family:inherit;outline:none;}
+  .inbar input:focus{border-color:var(--wine);}
+  .inbar button{background:var(--wine);color:#fff;border:none;border-radius:10px;padding:0 18px;font-weight:600;cursor:pointer;font-size:13.5px;}
+  .inbar button:disabled{opacity:.5;cursor:default;}
+  .note{font-size:10.5px;color:var(--muted);text-align:center;margin:8px auto 0;max-width:760px;line-height:1.5;}
+  .typing{font-style:italic;color:var(--muted);}
+  .dots span{animation:b 1.2s infinite;}.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+  @keyframes b{0%,80%,100%{opacity:.3}40%{opacity:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="app">
+    <div class="hd">
+      <div class="avatar">🐻</div>
+      <div class="grow">
+        <div class="t">Bao Bao · Just-in-Case Assurance <span class="live" id="mode">checking…</span></div>
+        <div class="s"><span class="dot"></span><span id="tagline">"We've got you — just in case."</span></div>
+      </div>
+      <div class="langs">
+        <button class="lang on" id="btnEN">EN</button>
+        <button class="lang" id="btnVI">VI</button>
+      </div>
+    </div>
+    <div class="kri" id="kriPanel">
+      <h4 id="kriTitle">INTERNAL ops view (demo)</h4>
+      <div class="kgrid" id="kgrid"></div>
+      <div class="note2" id="kriNote"></div>
+    </div>
+    <div class="chat" id="chat"></div>
+    <div class="chips" id="chips"></div>
+    <div class="inbar">
+      <input id="in" type="text" placeholder="" autocomplete="off">
+      <button id="send">Send</button>
+    </div>
+  </div>
+  <div class="note" id="footnote">
+    Live demo for BUS625 Session 2 · <b>Just-in-Case Assurance</b> is fictional; specs modelled on typical Vietnam-market life products; quotes are illustrative, not offers.
+    Bao Bao answers only from its knowledge base, never decides claims, and gives no individual medical/tax/legal/investment advice — by design.
+  </div>
+</div>
+
+<script>
+// ============ STRUCTURED PLAN DATA ============
+const PLANS = {
+ term:  {id:'term',  en:'Oops-Proof Term', vi:'Oops-Proof Term (tử kỳ)', type:{en:'Term life — pure protection',vi:'Tử kỳ — thuần bảo vệ'}, entry:'18–60', term:{en:'5–30 yrs',vi:'5–30 năm'}, sa:'100M–10B', prem:{en:'pay while covered',vi:'đóng trong suốt thời hạn'}, cash:{en:'None (cheapest)',vi:'Không (phí rẻ nhất)'}, best:{en:'Max protection per dong',vi:'Bảo vệ tối đa trên mỗi đồng phí'}},
+ whole: {id:'whole', en:'Forever Cuddle', vi:'Forever Cuddle (trọn đời)', type:{en:'Whole life + savings value',vi:'Trọn đời + giá trị hoàn lại'}, entry:'0–65', term:{en:'to age 99',vi:'đến 99 tuổi'}, sa:{en:'from 200M',vi:'từ 200 triệu'}, prem:{en:'10/15/20 yrs',vi:'10/15/20 năm'}, cash:{en:'Guaranteed from yr 2 + yearly bonuses',vi:'Đảm bảo từ năm 2 + bảo tức'}, best:{en:'Lifelong cover + legacy',vi:'Bảo vệ trọn đời + để lại tài sản'}},
+ teddy: {id:'teddy', en:'Steady Teddy', vi:'Steady Teddy (liên kết chung)', type:{en:'Universal life (VN favourite)',vi:'Liên kết chung (được chuộng nhất VN)'}, entry:'0–65', term:{en:'to age 99',vi:'đến 99 tuổi'}, sa:{en:'from 100M',vi:'từ 100 triệu'}, prem:{en:'Flexible after yr 1',vi:'Linh hoạt từ năm 2'}, cash:{en:'Account value, min 2%/yr guaranteed',vi:'Giá trị tài khoản, lãi đảm bảo 2%/năm'}, best:{en:'Flexibility + a guaranteed floor',vi:'Linh hoạt + lãi sàn đảm bảo'}},
+ piggy: {id:'piggy', en:'Piggy-Bank Plus', vi:'Piggy-Bank Plus (hỗn hợp)', type:{en:'Endowment — protect + save',vi:'Hỗn hợp — bảo vệ + tích lũy'}, entry:'0–60', term:{en:'10/15/20 yrs',vi:'10/15/20 năm'}, sa:{en:'from 100M',vi:'từ 100 triệu'}, prem:{en:'= term',vi:'= thời hạn'}, cash:{en:'Guaranteed maturity + bonuses',vi:'Đáo hạn đảm bảo + bảo tức'}, best:{en:'Disciplined saving to a date',vi:'Tích lũy kỷ luật có thời điểm'}},
+ moon:  {id:'moon',  en:'Moonshot Invest', vi:'Moonshot Invest (LK đơn vị)', type:{en:'Unit-linked investment',vi:'Liên kết đơn vị'}, entry:'0–65', term:{en:'flexible / whole life',vi:'linh hoạt / trọn đời'}, sa:{en:'multiple of premium',vi:'bội số phí'}, prem:{en:'regular + top-ups',vi:'định kỳ + đóng thêm'}, cash:{en:'Follows fund performance (not guaranteed)',vi:'Theo kết quả các quỹ (không đảm bảo)'}, best:{en:'Long-horizon growth seekers',vi:'Tăng trưởng dài hạn'}},
+ boo:   {id:'boo',   en:'Boo-Boo Care', vi:'Boo-Boo Care (sức khỏe)', type:{en:'Medical / hospital',vi:'Y tế / nằm viện'}, entry:'0–65', term:{en:'1 yr renewable',vi:'1 năm, tái tục'}, sa:{en:'250M–1B/yr by tier',vi:'250 triệu–1 tỷ/năm theo hạng'}, prem:{en:'annual',vi:'hằng năm'}, cash:{en:'None',vi:'Không'}, best:{en:'Hospital bills, cashless network',vi:'Viện phí, bảo lãnh không tiền mặt'}}
+};
+const PLANWORDS = {term:["term","oops","tử kỳ"], whole:["whole","cuddle","forever","trọn đời"], teddy:["teddy","universal","liên kết chung"], piggy:["piggy","endow","hỗn hợp","tích lũy"], moon:["moonshot","unit","ilp","moon","đơn vị"], boo:["boo","health","medical","sức khỏe"]};
+
+// ============ KNOWLEDGE BASE (LLM grounding) ============
+const KB_TEXT = `
+INSURER: Just-in-Case Assurance (fictional; specs modelled on the Vietnam life market). HOTLINE: 1900-JUST (7:30-21:00). APP: Just-in-Case app + portal + Zalo OA (chat, service, eClaim).
+PRODUCTS: 1) Oops-Proof Term: entry 18-60, terms 5-30y, cover 100M-10B, lump sum on death/total permanent disability, no savings value, suicide excluded first 24 months. 2) Forever Cuddle (whole life): entry 0-65, to age 99, cover from 200M, pay 10/15/20y, savings value from yr 2 + yearly bonuses, automatic premium loan keeps cover alive if a payment is missed. 3) Steady Teddy (universal life, VN's most popular): entry 0-65, to 99, flexible payments after yr 1, announced interest with guaranteed minimum 2%/yr, loyalty bonus each 3 yrs, partial withdrawal, payment holiday. 4) Piggy-Bank Plus (endowment): entry 0-60, 10/15/20y, guaranteed maturity payout + yearly and final bonuses. 5) Moonshot Invest (unit-linked): funds Rocket Growth/Cruise Balanced/Pillow Bond, 4 free switches/yr, top-ups from 2M, payment holiday after yr 4, contract charges apply. 6) Boo-Boo Care (medical): Silver 250M / Gold 500M / Diamond 1B (dental+maternity), cashless at 300+ network hospitals via guarantee letter.
+RIDERS: 3-stage critical illness (100 conditions, pays 25/50/100% by stage, 90-day waiting); accident cover (+100% on accidental death, +200% on public transport, no waiting); hospital cash 500k/day x2 ICU; premium waiver.
+CLAIMS: eClaim via app/Zalo with photos. Fast-track ~30 MINUTES for medical claims under 10M. Others: 30 working days from complete docs; payout in 24h. Death claims: 30M funeral cash advance within 1 working day. Waiting: critical illness 90 days, illness-hospital 30 days, accidents none. The bot NEVER decides claims.
+SERVICE: pay via app/Zalo/bank/e-wallet/branch; modes annual to monthly. Grace 60 days. Restore within 24 months. Free-look 21 days. Beneficiary change ~3 working days. Policy loan up to 80% of surrender value. Contact-detail updates instant in app.
+ILLUSTRATIVE PREMIUM GUIDES (per 1,000 VND of cover per year, BEFORE health assessment, indicative only): Term: age<30:1.2, 30s:1.8, 40s:3.2, 50+:6.0 (x1.0 10y, x1.2 20y, x1.4 30y). Whole life paying 15 years: 6 + 0.30 x age. Steady Teddy typical planned premium: 3.5 + 0.15 x age. Boo-Boo Care: Silver 3.5M/yr (6M if 45+), Gold 6.5M (11M), Diamond 12M (20M).
+`;
+
+// ============ SYSTEM INSTRUCTION ============
+const SYS = `You are Bao Bao, the cuddly bear virtual assistant for "Just-in-Case Assurance", a fictional Vietnamese life insurer (class demo).
+CUSTOMER CONTEXT: {JOURNEY}.
+PERSONALITY: warm, friendly, a little playful (occasional gentle emoji), professional, CONCISE - 2 to 5 sentences.
+LANGUAGE: interface is {LANG}. Reply in {LANGNAME} by default, mirror the customer if they switch. You understand Vietnamese colloquial/slang ("đóng tiền"=pay premium, "tiền đền"=claim payout, "hủy hợp đồng"=surrender).
+HARD RULES: 1) Use ONLY the KNOWLEDGE BASE; if absent, say so + hotline 1900-JUST. 2) NEVER approve/deny/estimate claim outcomes. 3) No individualised medical/tax/legal/investment advice; route plan choice to the needs check + licensed advisor. 4) Quotes from the premium guides are ALWAYS labelled illustrative, before health assessment, not an offer. 5) Never ask for ID/card numbers/OTP. 6) Plain customer wording - no abbreviations like SA, TPD, COI, NAV, APL. 7) End by offering the next helpful step.`;
+
+// ============ OFFLINE FALLBACK ============
+const FB = [
+ {k:["hello","hi","hey","chào","xin chào"], en:"Xin chào! 🐻 Tell me — are you exploring insurance, or already a Just-in-Case customer?", vi:"Xin chào! 🐻 Cho mình hỏi nhỏ — bạn đang tìm hiểu bảo hiểm, hay đã là khách hàng của Just-in-Case rồi?"},
+ {k:["product","plan list","what do you offer","sản phẩm","gói","bảo hiểm gì"], en:"Six plans 🧸: <b>Oops-Proof Term</b> (pure protection), <b>Forever Cuddle</b> (whole life), <b>Steady Teddy</b> (universal life — VN's favourite), <b>Piggy-Bank Plus</b> (endowment), <b>Moonshot Invest</b> (unit-linked), <b>Boo-Boo Care</b> (medical). Say a name for details, or let me <b>find what fits you</b>.", vi:"Sáu gói 🧸: <b>Oops-Proof Term</b> (thuần bảo vệ), <b>Forever Cuddle</b> (trọn đời), <b>Steady Teddy</b> (liên kết chung — chuộng nhất VN), <b>Piggy-Bank Plus</b> (hỗn hợp), <b>Moonshot Invest</b> (liên kết đơn vị), <b>Boo-Boo Care</b> (sức khỏe). Gọi tên gói để xem chi tiết, hoặc để mình <b>tìm gói hợp với bạn</b>."},
+ {k:["teddy","universal","liên kết chung"], en:"<b>Steady Teddy</b> — universal life. Join 0–65, covered to 99, flexible payments after year 1, interest with a <b>guaranteed 2%/yr floor</b>, loyalty bonus every 3 years, partial withdrawal & payment holiday. Want me to simulate the fees?", vi:"<b>Steady Teddy</b> — liên kết chung. Tham gia 0–65 tuổi, bảo vệ đến 99, phí linh hoạt từ năm 2, lãi có <b>mức sàn đảm bảo 2%/năm</b>, thưởng duy trì mỗi 3 năm, rút một phần & tạm ngừng phí. Mình mô phỏng phí cho bạn nhé?"},
+ {k:["grace","late","missed","lapse","ân hạn","trễ hạn","quên đóng"], en:"Grace period is <b>60 days</b> — you stay covered. After that, plans with savings value keep themselves alive automatically; flexible plans deduct from your account value; otherwise the policy pauses (restore within 24 months). 🐻", vi:"Ân hạn <b>60 ngày</b> — bạn vẫn được bảo vệ. Sau đó gói có giá trị hoàn lại sẽ tự duy trì; gói linh hoạt khấu trừ từ tài khoản; nếu không hợp đồng tạm dừng (khôi phục trong 24 tháng). 🐻"},
+ {k:["premium","pay","payment","đóng phí","đóng tiền","thanh toán"], en:"Pay via the app, <b>Zalo</b>, bank transfer/auto-debit, e-wallet (Momo/ZaloPay/VNPay) or any branch — yearly to monthly. Grace period 60 days. Anything else?", vi:"Đóng phí qua app, <b>Zalo</b>, chuyển khoản/trích nợ, ví điện tử (Momo/ZaloPay/VNPay) hoặc tại quầy — định kỳ năm đến tháng. Ân hạn 60 ngày. Bạn cần gì thêm?"},
+ {k:["waiting","chờ"], en:"Waiting periods: <b>critical illness 90 days</b>, illness-related hospital stays 30 days, <b>accidents none</b>.", vi:"Thời gian chờ: <b>bệnh hiểm nghèo 90 ngày</b>, nằm viện do bệnh 30 ngày, <b>tai nạn không chờ</b>."},
+ {k:["beneficiary","thụ hưởng"], en:"Beneficiary change: submit the form (policy owner's signature) via app or branch — about 3 working days.", vi:"Thay đổi người thụ hưởng: nộp mẫu (chữ ký bên mua) qua app hoặc văn phòng — khoảng 3 ngày làm việc."},
+ {k:["loan","vay"], en:"Policy loans on Forever Cuddle & Piggy-Bank Plus — up to <b>80% of your policy's cash value</b>.", vi:"Vay hợp đồng với Forever Cuddle & Piggy-Bank Plus — tối đa <b>80% giá trị hoàn lại</b>."},
+ {k:["surrender","hủy hợp đồng","rút hết"], en:"Ending the policy pays its current cash value and stops your cover — consider a policy loan, partial withdrawal or payment holiday first. New policy? You have a <b>21-day free look</b>.", vi:"Hủy hợp đồng nhận giá trị hoàn lại và mất quyền lợi bảo vệ — cân nhắc vay, rút một phần hoặc tạm ngừng phí trước nha. Hợp đồng mới có <b>21 ngày cân nhắc</b>."},
+ {k:["rider","critical","hiểm nghèo","tai nạn","accident","bổ trợ"], en:"Extra protection 🧸: <b>critical illness</b> (100 conditions, pays by stage 25/50/100%, 90-day wait), <b>accident cover</b> (2× on accidental death, 3× on public transport, no wait), <b>hospital cash</b> (500k/day, ×2 in ICU), <b>premium waiver</b>. Add any to a base plan.", vi:"Bảo vệ thêm 🧸: <b>bệnh hiểm nghèo</b> (100 bệnh, chi trả theo giai đoạn 25/50/100%, chờ 90 ngày), <b>tai nạn</b> (2× khi tử vong do tai nạn, 3× trên phương tiện công cộng, không chờ), <b>trợ cấp nằm viện</b> (500k/ngày, ×2 ICU), <b>miễn đóng phí</b>. Gắn được với mọi gói chính."},
+ {k:["thank","cảm ơn","cám ơn","bye","tạm biệt"], en:"You're welcome! 🧸 Stay safe — just in case. Anything else?", vi:"Không có gì ạ! 🧸 Giữ gìn sức khỏe nha — phòng khi cần. Còn gì nữa không?"}
+];
+function fallback(raw, lang){
+  const t=" "+raw.toLowerCase()+" ";
+  for(const e of FB){ if(e.k.some(k=>t.includes(k))) return e[lang]; }
+  KRI.oos++;
+  return lang==='vi' ? "Xin lỗi, thông tin này chưa có trong kho kiến thức nên mình không đoán 🐻. Thử các nút bên dưới, hoặc gọi <b>1900-JUST</b> nha." : "Sorry, that's not in my knowledge base so I won't guess 🐻. Try the buttons below, or call <b>1900-JUST</b>.";
+}
+
+// ============ UI TEXT ============
+const UI={
+ en:{startChips:["🌱 I'm new — exploring","🏠 I'm an existing customer","❓ Just a quick question"],
+     browseChips:["Find what fits me","Compare plans","Simulate fees","Claim checklist","Our plans","📞 Talk to an advisor"],
+     existChips:["🧾 Claims — file or track","💳 Payments & due dates","✏️ Update my details","🎉 I have a life event","❓ Other questions"],
+     ph:"Type here — English hay tiếng Việt đều được…",
+     greet:"Xin chào! I'm <b>Bao Bao</b> 🐻 of <b>Just-in-Case Assurance</b>.\nSo I can help you best — are you exploring insurance for the first time, or already one of our customers?",
+     tag:"“We've got you — just in case.”", typing:"Bao Bao is typing", cancel:"(type “cancel” anytime to stop)",
+     kriT:"INTERNAL ops view (demo) — hidden from customers · type /ops", kriN:"In production this telemetry streams to the operations dashboard & CRM, never the customer UI.",
+     kris:["Messages","Tool-served","KB/LLM answers","Out-of-scope","Escalations","VI usage","Leads captured","Profile updates"]},
+ vi:{startChips:["🌱 Mình mới tìm hiểu","🏠 Mình là khách hàng rồi","❓ Hỏi nhanh thôi"],
+     browseChips:["Tìm gói hợp với mình","So sánh các gói","Mô phỏng phí","Hồ sơ bồi thường","Các gói bảo hiểm","📞 Gặp tư vấn viên"],
+     existChips:["🧾 Bồi thường — nộp/tra cứu","💳 Đóng phí & kỳ hạn","✏️ Cập nhật thông tin","🎉 Có tin vui/sự kiện mới","❓ Câu hỏi khác"],
+     ph:"Nhập tin nhắn — tiếng Việt hay English đều được…",
+     greet:"Xin chào! Mình là <b>Bao Bao</b> 🐻 của <b>Just-in-Case Assurance</b>.\nĐể hỗ trợ đúng nhất — bạn đang tìm hiểu bảo hiểm lần đầu, hay đã là khách hàng của nhà mình rồi?",
+     tag:"“Có Bao Bao lo — phòng khi cần.”", typing:"Bao Bao đang gõ", cancel:"(gõ “thôi” để dừng bất cứ lúc nào)",
+     kriT:"GÓC NỘI BỘ (demo) — khách hàng không thấy · gõ /ops", kriN:"Trong môi trường thật, dữ liệu này đổ về dashboard vận hành & CRM, không hiển thị cho khách hàng.",
+     kris:["Tin nhắn","Tool xử lý","KB/LLM trả lời","Ngoài phạm vi","Chuyển nhân viên","Dùng tiếng Việt","Lead thu được","Cập nhật hồ sơ"]}
+};
+let LANG='en';
+const KRI={msgs:0,tool:0,kb:0,oos:0,esc:0,vi:0,leads:0,upd:0};
+let JOURNEY=null; // 'new' | 'exist' | 'browse'
+const PROFILE={}; // {age, goal, name, phone, time, rec:[]}
+let FLOW=null;
+
+// ============ SHARED HELPERS ============
+function fmtVND(x,lang){ if(x>=1e9) return (Math.round(x/1e7)/100)+(lang==='vi'?' tỷ':'B VND'); return (Math.round(x/1e5)/10)+(lang==='vi'?' triệu':'M VND'); }
+function plansIn(t){ const f=[]; for(const id in PLANWORDS){ if(PLANWORDS[id].some(w=>t.includes(w))) f.push(id);} return f; }
+function compareTable(ids,lang){
+  const rows=[['type','Type','Loại'],['entry','Joining age','Tuổi tham gia'],['term','Cover period','Thời hạn'],['sa','Cover amount','Số tiền bảo hiểm'],['prem','Paying period','Thời gian đóng phí'],['cash','Savings value','Giá trị hoàn lại'],['best','Best for','Phù hợp khi']];
+  let h='<table><tr><th></th>'+ids.map(i=>'<th>'+PLANS[i][lang]+'</th>').join('')+'</tr>';
+  rows.forEach(r=>{ h+='<tr><td><b>'+(lang==='vi'?r[2]:r[1])+'</b></td>'+ids.map(i=>{const v=PLANS[i][r[0]];return '<td>'+(typeof v==='object'?v[lang]:v)+'</td>';}).join('')+'</tr>'; });
+  return h+'</table>';
+}
+function parseMoney(t){
+  t=t.toLowerCase().replace(/,/g,'').replace(/\./g,'');
+  let m=t.match(/(\d+)\s*(tỷ|ty|b\b|billion)/); if(m) return parseInt(m[1])*1e9;
+  m=t.match(/(\d+)\s*(triệu|trieu|tr\b|m\b|million)/); if(m) return parseInt(m[1])*1e6;
+  m=t.match(/(\d{8,})/); if(m) return parseInt(m[1]);
+  return null;
+}
+const CANCEL=/cancel|thôi|stop|dừng/;
+
+// ============ JOURNEY: NEW CUSTOMER (needs → recommend → simulate → advisor) ============
+function startNeeds(lang){
+  FLOW={type:'needs',step:1};
+  setChips(lang==='vi'?["Bảo vệ gia đình","Tích lũy có mục tiêu","Tăng trưởng tài sản","Chăm sóc sức khỏe"]:["Protect my family","Save for a goal","Grow my money","Health & hospital cover"]);
+  return (lang==='vi'?"Để mình tìm đúng gói cho bạn nha 🧸 Điều bạn quan tâm nhất là gì?":"Let me find what fits you 🧸 What matters most to you right now?")+' <span class="mini">'+UI[lang].cancel+'</span>';
+}
+function needsStep(raw,lang){
+  const t=raw.toLowerCase();
+  if(CANCEL.test(t)){FLOW=null;journeyChips();return lang==='vi'?"Dạ, dừng nha 🐻":"Stopped 🐻";}
+  if(FLOW.step===1){
+    if(/protect|bảo vệ/.test(t)){PROFILE.rec=['term','whole'];FLOW.step='age';setChips([]);return askAge(lang);}
+    if(/health|sức khỏe/.test(t)){PROFILE.rec=['boo'];FLOW.step='age';setChips([]);return askAge(lang);}
+    if(/save|tích lũy/.test(t)){PROFILE.goal='save';} else if(/grow|tăng trưởng/.test(t)){PROFILE.goal='grow';} else return lang==='vi'?"Chọn một hướng bên dưới giúp mình nha":"Pick one below";
+    FLOW.step=2;setChips(lang==='vi'?["Ưu tiên chắc chắn","Chấp nhận biến động để tăng trưởng"]:["Prefer guarantees","Accept ups & downs for growth"]);
+    return lang==='vi'?"Bạn ưu tiên sự chắc chắn, hay chấp nhận biến động để tăng trưởng?":"Do you prefer guarantees, or accept some ups and downs for growth?";
+  }
+  if(FLOW.step===2){
+    PROFILE.guar=/guarantee|chắc chắn/.test(t);
+    FLOW.step=3;setChips(lang==='vi'?["Đóng đều đặn được","Thu nhập không đều, cần linh hoạt"]:["I can pay on a fixed schedule","Income varies — need flexibility"]);
+    return lang==='vi'?"Bạn đóng phí đều đặn được, hay cần linh hoạt?":"Can you pay on a fixed schedule, or do you need flexibility?";
+  }
+  if(FLOW.step===3){
+    const flex=/flex|linh hoạt|không đều/.test(t);
+    PROFILE.rec = PROFILE.guar ? (flex?['teddy','piggy']:['piggy','teddy']) : (flex?['moon','teddy']:['moon','piggy']);
+    FLOW.step='age';setChips([]);return askAge(lang);
+  }
+  if(FLOW.step==='age'){
+    const m=t.match(/(\d{1,2})/); if(!m) return lang==='vi'?"Gõ tuổi bằng số giúp mình (vd: 35) nha":"Type your age as a number (e.g. 35)";
+    PROFILE.age=parseInt(m[1]); FLOW=null;
+    return showRec(lang);
+  }
+}
+function askAge(lang){ return lang==='vi'?"Hợp lý nè! Cho mình hỏi tuổi của bạn để lát nữa mô phỏng phí luôn nha? (gõ số)":"Great choice! And your age — so I can simulate the fees right after? (type a number)"; }
+function showRec(lang){
+  const rec=PROFILE.rec;
+  const names=rec.map(i=>'<b>'+PLANS[i][lang]+'</b>').join(lang==='vi'?' và ':' and ');
+  const ch=rec.map(i=>(lang==='vi'?'💰 Mô phỏng phí: ':'💰 Simulate fees: ')+PLANS[i].en.split(' ')[0]);
+  ch.push(lang==='vi'?'➕ Bảo vệ thêm (bổ trợ)':'➕ Extra protection (riders)');
+  ch.push(lang==='vi'?'📞 Gặp tư vấn viên':'📞 Talk to an advisor');
+  setChips(ch);
+  return (lang==='vi'?"Dựa trên chia sẻ của bạn, hai gói <b>đáng tìm hiểu</b>: ":"Based on what you shared, worth exploring: ")+names+'.\n'+compareTable(rec.length>1?rec:[rec[0]],lang)
+   +'\n'+(lang==='vi'?"Bước tiếp theo: mô phỏng phí thử nhé? 🧸":"Next step — shall we simulate the fees? 🧸")
+   +'\n<span class="mini">'+(lang==='vi'?"Gợi ý khoanh vùng, không phải tư vấn chính thức — tư vấn viên sẽ phân tích đầy đủ.":"A shortlist, not formal advice — a licensed advisor does the full needs analysis.")+'</span>';
+}
+// ---- fee simulation (uses PROFILE.age if known) ----
+function startQuote(lang,preset){
+  FLOW={type:'quote',step:'plan'};
+  if(preset){FLOW.plan=preset;}
+  if(FLOW.plan){ if(FLOW.plan==='boo'){FLOW.step='tier';setChips(["Silver","Gold","Diamond"]);return lang==='vi'?"Bạn muốn hạng thẻ nào?":"Which tier?";}
+    if(PROFILE.age){FLOW.age=PROFILE.age;FLOW.step='sa';setChips(["500 triệu","1 tỷ","2 tỷ"]);return saQ(lang);}
+    FLOW.step='age';setChips([]);return ageQ(lang); }
+  setChips(lang==='vi'?["Tử kỳ (Term)","Trọn đời (Cuddle)","Steady Teddy","Sức khỏe (Boo-Boo)"]:["Term (Oops-Proof)","Whole life (Cuddle)","Steady Teddy","Health (Boo-Boo)"]);
+  return (lang==='vi'?"Mô phỏng phí <b>minh họa</b> nha! Bạn muốn gói nào? ":"Illustrative <b>fee simulation</b>! Which plan? ")+'<span class="mini">'+UI[lang].cancel+'</span>';
+}
+function ageQ(lang){return lang==='vi'?"Tuổi của người được bảo hiểm? (gõ số)":"Age of the insured? (type a number)";}
+function saQ(lang){return lang==='vi'?"Số tiền bảo hiểm mong muốn? (vd: 1 tỷ, 500 triệu)":"Desired cover amount? (e.g. 1 tỷ, 500 triệu)";}
+function quoteStep(raw,lang){
+  const t=raw.toLowerCase();
+  if(CANCEL.test(t)){FLOW=null;journeyChips();return lang==='vi'?"Dạ, dừng mô phỏng nha 🐻":"Simulation cancelled 🐻";}
+  if(FLOW.step==='plan'){
+    const ids=plansIn(t); const q=['term','whole','teddy','boo'].find(x=>ids.includes(x));
+    if(!q) return lang==='vi'?"Chọn một gói bên dưới giúp mình nha 🧸":"Please pick one of the plans below 🧸";
+    FLOW.plan=q;
+    if(q==='boo'){FLOW.step='tier';setChips(["Silver","Gold","Diamond"]);return lang==='vi'?"Bạn muốn hạng thẻ nào?":"Which tier?";}
+    if(PROFILE.age){FLOW.age=PROFILE.age;FLOW.step='sa';setChips(["500 triệu","1 tỷ","2 tỷ"]);return saQ(lang);}
+    FLOW.step='age';setChips([]);return ageQ(lang);
+  }
+  if(FLOW.step==='tier'){
+    const tier=['silver','gold','diamond'].find(x=>t.includes(x));
+    if(!tier) return lang==='vi'?"Chọn Silver, Gold hoặc Diamond nha":"Pick Silver, Gold or Diamond";
+    FLOW.tier=tier;
+    if(PROFILE.age){FLOW.age=PROFILE.age;return finishQuote(lang);}
+    FLOW.step='age';setChips([]);return ageQ(lang);
+  }
+  if(FLOW.step==='age'){
+    const m=t.match(/(\d{1,2})/); if(!m) return lang==='vi'?"Gõ tuổi bằng số (vd: 35)":"Type the age as a number (e.g. 35)";
+    FLOW.age=parseInt(m[1]); PROFILE.age=PROFILE.age||FLOW.age;
+    if(FLOW.plan==='boo') return finishQuote(lang);
+    FLOW.step='sa';setChips(["500 triệu","1 tỷ","2 tỷ"]);return saQ(lang);
+  }
+  if(FLOW.step==='sa'){
+    const sa=parseMoney(t); if(!sa) return lang==='vi'?"Gõ số tiền như “1 tỷ” hoặc “500 triệu” nha":"Type an amount like “1 tỷ” or “500 triệu”";
+    FLOW.sa=sa;
+    if(FLOW.plan==='term'){FLOW.step='term';setChips(["10","20","30"]);return lang==='vi'?"Bảo vệ trong bao nhiêu năm?":"Covered for how many years?";}
+    return finishQuote(lang);
+  }
+  if(FLOW.step==='term'){
+    const m=t.match(/(\d{1,2})/); if(!m) return lang==='vi'?"Chọn 10, 20 hoặc 30 năm nha":"Pick 10, 20 or 30 years";
+    FLOW.years=parseInt(m[1]); return finishQuote(lang);
+  }
+}
+function finishQuote(lang){
+  const f=FLOW; FLOW=null;
+  let annual=0, name=PLANS[f.plan][lang], extra='';
+  if(f.plan==='boo'){ const base={silver:[3.5e6,6e6],gold:[6.5e6,11e6],diamond:[12e6,20e6]}[f.tier]; annual=f.age>=45?base[1]:base[0]; name+=' · '+f.tier[0].toUpperCase()+f.tier.slice(1); }
+  else if(f.plan==='term'){ const r=f.age<30?1.2:f.age<40?1.8:f.age<50?3.2:6.0; const tf=f.years<=10?1.0:f.years<=20?1.2:1.4; annual=f.sa*r*tf/1000; extra=(lang==='vi'?'Số tiền bảo hiểm ':'Cover amount ')+fmtVND(f.sa,lang)+' · '+f.years+(lang==='vi'?' năm':'y'); }
+  else if(f.plan==='whole'){ annual=f.sa*(6+0.30*f.age)/1000; extra=(lang==='vi'?'Số tiền bảo hiểm ':'Cover amount ')+fmtVND(f.sa,lang)+(lang==='vi'?' · đóng phí 15 năm':' · paying 15 years'); }
+  else if(f.plan==='teddy'){ annual=f.sa*(3.5+0.15*f.age)/1000; extra=(lang==='vi'?'Phí dự kiến cho số tiền bảo hiểm ':'Planned premium for cover of ')+fmtVND(f.sa,lang); }
+  const head=lang==='vi'?'Mô phỏng phí minh họa 🐻':'Illustrative fee simulation 🐻';
+  const per=lang==='vi'?'/năm (≈ '+fmtVND(Math.round(annual/12),lang)+'/tháng)':'/year (≈ '+fmtVND(Math.round(annual/12),lang)+'/month)';
+  const disc=lang==='vi'?'Chỉ mang tính minh họa, trước thẩm định sức khỏe, không phải chào giá chính thức.':'Illustrative only, before any health assessment, not an official offer.';
+  setChips(JOURNEY==='new' ? (lang==='vi'?["➕ Bảo vệ thêm (bổ trợ)","📞 Gặp tư vấn viên","So sánh các gói","🔄 Mô phỏng gói khác"]:["➕ Extra protection (riders)","📞 Talk to an advisor","Compare plans","🔄 Simulate another plan"]) : (UI[lang].browseChips));
+  const next=lang==='vi'?"\nBước tiếp theo: thêm bảo vệ bổ trợ, hoặc để tư vấn viên gọi xác nhận con số thật cho bạn? 🧸":"\nNext step — add extra protection, or have a licensed advisor call to confirm the real numbers? 🧸";
+  return '<b>'+head+'</b>\n'+name+(extra?' — '+extra:'')+'\n'+(lang==='vi'?'Tuổi ':'Age ')+f.age+'\n<b>≈ '+fmtVND(annual,lang)+'</b>'+per+'\n<span class="mini">'+disc+'</span>'+next;
+}
+
+// ============ ADVISOR CALLBACK (lead capture) ============
+function startLead(lang){
+  FLOW={type:'lead',step:'name'}; setChips([]); KRI.esc++;
+  return (lang==='vi'?"Mình sắp xếp tư vấn viên có chứng chỉ gọi cho bạn nha 📞 Bạn cho mình xin tên gọi trước?":"I'll arrange a licensed advisor to call you 📞 May I have your name first?")+' <span class="mini">'+UI[lang].cancel+'</span>';
+}
+function leadStep(raw,lang){
+  const t=raw.toLowerCase();
+  if(CANCEL.test(t)){FLOW=null;journeyChips();return lang==='vi'?"Dạ, khi nào cần bạn cứ gọi mình nha 🐻":"No problem — I'm here whenever 🐻";}
+  if(FLOW.step==='name'){ FLOW.name=raw.trim().slice(0,40); FLOW.step='phone';
+    return (lang==='vi'?"Cảm ơn "+FLOW.name+"! Số điện thoại hoặc Zalo để tư vấn viên liên hệ? ":"Thanks "+FLOW.name+"! A phone or Zalo number for the advisor to reach you? ")+'<span class="mini">'+(lang==='vi'?"Chỉ dùng để hẹn gọi — không bao giờ hỏi OTP hay số thẻ.":"Used only to arrange the call — we never ask for OTP or card numbers.")+'</span>'; }
+  if(FLOW.step==='phone'){ const m=raw.replace(/[^\d]/g,''); if(m.length<9) return lang==='vi'?"Số chưa đúng — bạn kiểm tra giúp mình nha":"That number looks short — mind checking it?";
+    FLOW.phone=m; FLOW.step='time'; setChips(lang==='vi'?["Sáng","Chiều","Tối"]:["Morning","Afternoon","Evening"]);
+    return lang==='vi'?"Bạn tiện nghe máy lúc nào?":"When is best to call?"; }
+  if(FLOW.step==='time'){ const f=FLOW; FLOW=null; KRI.leads++; PROFILE.name=f.name; journeyChips();
+    return (lang==='vi'?"Tuyệt vời! 🧸 Tư vấn viên sẽ gọi <b>"+f.name+"</b> vào buổi "+raw.toLowerCase()+" (trong vòng 24 giờ làm việc). Cảm ơn bạn đã tin Just-in-Case!":"All set! 🧸 A licensed advisor will call <b>"+f.name+"</b> in the "+raw.toLowerCase()+" (within 24 working hours). Thank you for trusting Just-in-Case!")
+    +'\n<span class="mini">'+(lang==='vi'?"Demo: trong môi trường thật, yêu cầu này chuyển vào CRM cho đội tư vấn.":"Demo: in production this request flows into the CRM for the advisory team.")+'</span>'; }
+}
+
+// ============ EXISTING CUSTOMER: update details ============
+function startUpdate(lang){
+  FLOW={type:'update',step:'what'};
+  setChips(lang==='vi'?["📱 Số điện thoại","🏠 Địa chỉ","✉️ Email","👤 Người thụ hưởng"]:["📱 Phone number","🏠 Address","✉️ Email","👤 Beneficiary"]);
+  return (lang==='vi'?"Mình giúp bạn cập nhật thông tin nha ✏️ Bạn muốn thay đổi mục nào?":"Happy to update your details ✏️ What would you like to change?")+' <span class="mini">'+UI[lang].cancel+'</span>';
+}
+function updateStep(raw,lang){
+  const t=raw.toLowerCase();
+  if(CANCEL.test(t)){FLOW=null;journeyChips();return lang==='vi'?"Dạ, dừng nha 🐻":"Stopped 🐻";}
+  if(FLOW.step==='what'){
+    if(/benefici|thụ hưởng/.test(t)){FLOW=null;journeyChips();KRI.upd++;
+      return lang==='vi'?"Thay đổi người thụ hưởng cần <b>chữ ký của bên mua bảo hiểm</b> nên mình không làm qua chat được — bạn nộp mẫu trên app hoặc tại văn phòng, khoảng 3 ngày làm việc. Mình gửi hướng dẫn từng bước nhé?":"Beneficiary changes need the <b>policy owner's signature</b>, so I can't do it in chat — submit the form on the app or at a branch (~3 working days). Want the step-by-step?";}
+    const what=/phone|điện thoại/.test(t)?'phone':/address|địa chỉ/.test(t)?'address':/email/.test(t)?'email':null;
+    if(!what) return lang==='vi'?"Chọn một mục bên dưới giúp mình nha":"Pick one below";
+    FLOW.what=what; FLOW.step='value'; setChips([]);
+    const label={phone:{en:'new phone number',vi:'số điện thoại mới'},address:{en:'new address',vi:'địa chỉ mới'},email:{en:'new email',vi:'email mới'}}[what][lang];
+    return (lang==='vi'?"Bạn nhập ":"Please type your ")+label+(lang==='vi'?" giúp mình nha":"")+' <span class="mini">'+(lang==='vi'?"Không bao giờ gửi OTP hay số thẻ qua chat nha.":"Never send OTP or card numbers in chat.")+'</span>';
+  }
+  if(FLOW.step==='value'){
+    const f=FLOW; FLOW=null; KRI.upd++; journeyChips();
+    return (lang==='vi'?"Đã ghi nhận ✓ Đội dịch vụ sẽ xác minh và cập nhật hồ sơ của bạn trong 1 ngày làm việc. Bạn cũng có thể tự đổi tức thì trên app Just-in-Case nha. Còn gì nữa không? 🐻":"Noted ✓ Our service team will verify and update your records within 1 working day. You can also change it instantly yourself in the Just-in-Case app. Anything else? 🐻")
+    +'\n<span class="mini">'+(lang==='vi'?"Demo: trong môi trường thật, cập nhật chuyển vào hệ thống hồ sơ qua eKYC.":"Demo: in production this update flows into the policy system via eKYC verification.")+'</span>';
+  }
+}
+
+// ============ EXISTING CUSTOMER: life events ============
+function startEvent(lang){
+  FLOW={type:'event',step:1};
+  setChips(lang==='vi'?["💍 Mới kết hôn","👶 Có em bé","💼 Đổi việc/thu nhập","🏠 Mua nhà"]:["💍 Just married","👶 New baby","💼 New job / income change","🏠 Bought a home"]);
+  return (lang==='vi'?"Ôi, kể mình nghe với! 🎉 Là tin vui nào vậy?":"Ooh, tell me! 🎉 What's the news?");
+}
+function eventStep(raw,lang){
+  const t=raw.toLowerCase();
+  if(CANCEL.test(t)){FLOW=null;journeyChips();return lang==='vi'?"Dạ 🐻":"Okay 🐻";}
+  FLOW=null; KRI.upd++;
+  let msg;
+  if(/married|kết hôn/.test(t)) msg = lang==='vi'?"Chúc mừng hai bạn! 💍 Sau kết hôn, nhiều khách hàng cập nhật <b>người thụ hưởng</b> và xem lại <b>số tiền bảo vệ</b> cho gia đình mới.":"Congratulations! 💍 After marriage, many customers update their <b>beneficiary</b> and review their <b>cover amount</b> for the new family.";
+  else if(/baby|em bé/.test(t)) msg = lang==='vi'?"Chúc mừng gia đình mình! 👶 Có em bé thường là lúc xem lại số tiền bảo vệ, thêm <b>bổ trợ bệnh hiểm nghèo cho trẻ em</b>, và cân nhắc gói tích lũy học vấn.":"Congratulations! 👶 A new baby is usually the moment to review your cover, add the <b>juvenile critical-illness rider</b>, and consider an education savings plan.";
+  else if(/job|income|việc|thu nhập/.test(t)) msg = lang==='vi'?"Chúc mừng bạn! 💼 Thu nhập thay đổi là lúc tốt để chỉnh mức phí (gói linh hoạt chỉnh được ngay) hoặc nâng số tiền bảo vệ.":"Congratulations! 💼 An income change is a good moment to adjust your premium (flexible plans adjust instantly) or raise your cover.";
+  else if(/home|house|nhà/.test(t)) msg = lang==='vi'?"Chúc mừng tổ ấm mới! 🏠 Nhiều khách hàng tăng số tiền bảo vệ tương ứng dư nợ vay nhà để gia đình luôn an toàn.":"Congratulations on the new home! 🏠 Many customers raise their cover to match the home loan so the family is always safe.";
+  else { msg = lang==='vi'?"Cảm ơn bạn đã chia sẻ! Mình đã ghi nhận để đội dịch vụ cập nhật hồ sơ.":"Thanks for sharing! I've noted it for our service team to update your records."; }
+  setChips(lang==='vi'?["📞 Xem lại quyền lợi với tư vấn viên","Để sau nha"]:["📞 Review my cover with an advisor","Maybe later"]);
+  return msg+'\n'+(lang==='vi'?"Mình đã ghi nhận thông tin này vào hồ sơ của bạn ✓ Bạn muốn tư vấn viên gọi xem lại quyền lợi miễn phí không?":"I've noted this on your profile ✓ Would you like a free cover review call with an advisor?")
+  +'\n<span class="mini">'+(lang==='vi'?"Demo: sự kiện này sẽ cập nhật vào CRM trong môi trường thật.":"Demo: in production this life event updates the CRM.")+'</span>';
+}
+
+// ============ OTHER TOOLS ============
+function toolCompare(t,lang){
+  const ids=plansIn(t);
+  if(ids.length>=2) return compareTable(ids.slice(0,3),lang)+'<span class="mini">'+(lang==='vi'?"So sánh để tham khảo — tư vấn viên sẽ thiết kế theo nhu cầu của bạn.":"For reference — a licensed advisor tailors it to you.")+'</span>';
+  setChips(lang==='vi'?["So sánh Teddy vs Cuddle","So sánh Term vs Teddy","So sánh Piggy vs Moonshot"]:["Compare Teddy vs Cuddle","Compare Term vs Teddy","Compare Piggy vs Moonshot"]);
+  return lang==='vi'?"Bạn muốn so sánh gói nào? Chọn bên dưới hoặc gõ tên hai gói 🐻":"Which plans shall I compare? Pick below or type two names 🐻";
+}
+function toolChecklist(t,lang){
+  const types={death:["death","tử vong","mất"],tpd:["tpd","disab","thương tật"],ci:["critical","hiểm nghèo","ung thư"],med:["medical","hospital","y tế","nằm viện"],mat:["maturity","đáo hạn"]};
+  let pick=null; for(const k in types){ if(types[k].some(w=>t.includes(w))) pick=k; }
+  if(!pick){ setChips(lang==='vi'?["Hồ sơ tử vong","Hồ sơ thương tật","Hồ sơ hiểm nghèo","Hồ sơ y tế","Đáo hạn"]:["Death claim","Disability claim","Critical illness claim","Medical claim","Maturity"]);
+    return lang==='vi'?"Mình chuẩn bị checklist hồ sơ cho bạn nha 🧸 Quyền lợi nào ạ?":"I'll build your document checklist 🧸 Which claim is it?"; }
+  const L={ death:{en:["Death certificate (certified)","Policy document","Your ID","Beneficiary ID + relationship proof","Claim form"],vi:["Giấy chứng tử (sao y)","Hợp đồng bảo hiểm","Giấy tờ tùy thân của bạn","Giấy tờ người thụ hưởng + chứng minh quan hệ","Đơn yêu cầu"]},
+    tpd:{en:["Medical assessment report","Hospital records","Claim form","Your ID"],vi:["Biên bản giám định y khoa","Hồ sơ bệnh viện","Đơn yêu cầu","Giấy tờ tùy thân"]},
+    ci:{en:["Specialist diagnosis","Test results","Claim form","Your ID"],vi:["Chẩn đoán chuyên khoa","Kết quả xét nghiệm","Đơn yêu cầu","Giấy tờ tùy thân"]},
+    med:{en:["Itemised hospital invoice","Discharge summary","Prescriptions","Claim form (photos OK)"],vi:["Hóa đơn viện phí chi tiết","Giấy ra viện","Toa thuốc","Đơn yêu cầu (chụp ảnh được)"]},
+    mat:{en:["Automatic at the end of term — just confirm your bank details in the app"],vi:["Tự động khi đáo hạn — chỉ cần xác nhận tài khoản ngân hàng trên app"]} }[pick];
+  let h='<b>'+(lang==='vi'?'Checklist hồ sơ':'Your claim checklist')+'</b><ul class="chk">'+L[lang].map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+  h+= lang==='vi' ? 'Nộp qua app/Zalo (chụp ảnh giấy tờ) hoặc văn phòng. Kết quả trong 30 ngày làm việc khi đủ hồ sơ; hồ sơ y tế dưới 10 triệu ~30 phút; chi trả trong 24 giờ.' : 'File via app/Zalo (photos are fine) or a branch. Decision within 30 working days of complete documents; medical claims under 10M ~30 minutes; payout within 24h.';
+  if(pick==='death') h+= lang==='vi'?' <b>Tạm ứng mai táng 30 triệu trong 1 ngày làm việc.</b>':' <b>30M funeral support advance within 1 working day.</b>';
+  h+='\n<span class="mini">'+(lang==='vi'?'Mình hướng dẫn quy trình; kết quả do đội thẩm định quyết định.':'I guide the process; outcomes are decided by our claims team.')+'</span>';
+  return h;
+}
+
+// ============ ENGINE ============
+const historyA=[];
+function liveReady(){ return !!(window.cowork && typeof window.cowork.askClaude==='function'); }
+// ---- web live engine (Gemini, free tier). Paste key to go live on the web; restrict it to your Pages domain. ----
+const API={key:"", model:"gemini-2.0-flash"};
+async function callGemini(prompt){
+  const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+API.model+":generateContent?key="+encodeURIComponent(API.key),
+    {method:"POST",headers:{"Content-Type":"application/json"},
+     body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:300,temperature:0.6}})});
+  if(!r.ok) throw new Error("api "+r.status);
+  const j=await r.json();
+  return (j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)?j.candidates[0].content.parts.map(p=>p.text||'').join(' '):'';
+}
+function journeyChips(){ setChips(JOURNEY==='exist'?UI[LANG].existChips:(JOURNEY?UI[LANG].browseChips:UI[LANG].startChips)); }
+function setJourney(j,lang){
+  JOURNEY=j; KRI.tool++;
+  if(j==='new'){ return startNeeds(lang); }
+  if(j==='exist'){ journeyChips(); return lang==='vi'?"Mừng bạn quay lại! 🐻 Hôm nay mình giúp gì được — bồi thường, đóng phí, cập nhật thông tin, hay có tin vui gì mới?":"Welcome back! 🐻 What can I do for you today — a claim, payments, updating your details, or any news to share?"; }
+  journeyChips(); return lang==='vi'?"Dạ, bạn cứ hỏi thoải mái nha 🐻":"Sure — ask away 🐻";
+}
+function tryTools(raw,lang){
+  const t=" "+raw.toLowerCase()+" ";
+  if(FLOW){ KRI.tool++;
+    if(FLOW.type==='needs') return needsStep(raw,lang);
+    if(FLOW.type==='quote') return quoteStep(raw,lang);
+    if(FLOW.type==='lead') return leadStep(raw,lang);
+    if(FLOW.type==='update') return updateStep(raw,lang);
+    if(FLOW.type==='event') return eventStep(raw,lang);
+  }
+  if(JOURNEY===null){
+    if(/🌱|i'm new|im new|exploring|mới tìm hiểu|lần đầu/.test(t)) return setJourney('new',lang);
+    if(/🏠|existing|đã là khách|khách hàng rồi|là khách hàng/.test(t)) return setJourney('exist',lang);
+    if(/❓|quick question|hỏi nhanh/.test(t)) return setJourney('browse',lang);
+  }
+  if(/simulate|mô phỏng|quick quote|báo giá/.test(t)){KRI.tool++; const ids=plansIn(t); return startQuote(lang, ['term','whole','teddy','boo'].find(x=>ids.includes(x)));}
+  if(/compare|so sánh| vs /.test(t)){KRI.tool++;return toolCompare(t,lang);}
+  if(/checklist|giấy tờ|hồ sơ|documents|claim|bồi thường|lãnh tiền|tiền đền/.test(t)){KRI.tool++;return toolChecklist(t,lang);}
+  if(/find what fits|fits me|which plan|phù hợp|tìm gói|nên mua|gói nào/.test(t)){KRI.tool++;return startNeeds(lang);}
+  if(/advisor|tư vấn viên|talk to|gặp nhân viên|callback|gọi lại|đặt lịch|review my cover|xem lại quyền lợi/.test(t)){KRI.tool++;return startLead(lang);}
+  if(/update my details|cập nhật thông tin|đổi số điện thoại|đổi địa chỉ|change my (phone|address|email)/.test(t)){KRI.tool++;return startUpdate(lang);}
+  if(/life event|sự kiện|tin vui|married|kết hôn|baby|em bé|🎉/.test(t)){KRI.tool++;return startEvent(lang);}
+  if(/extra protection|riders|bổ trợ|bảo vệ thêm/.test(t)){KRI.tool++; return FB.find(e=>e.k.includes("rider"))[lang];}
+  if(/payments|due date|đóng phí & kỳ hạn/.test(t)){KRI.tool++; return FB.find(e=>e.k.includes("premium"))[lang];}
+  if(/maybe later|để sau/.test(t)){journeyChips(); return lang==='vi'?"Dạ, khi nào cần bạn nói mình nha 🐻":"Of course — whenever you're ready 🐻";}
+  return null;
+}
+async function answer(userText){
+  const tool=tryTools(userText,LANG);
+  if(tool) return tool;
+  const jctx = JOURNEY==='new'?'a prospective customer exploring plans':(JOURNEY==='exist'?'an existing policyholder':'a visitor with questions');
+  const langName = LANG==='vi' ? 'Vietnamese (tiếng Việt)' : 'English';
+  const sys=SYS.replace('{JOURNEY}',jctx).replace('{LANG}',LANG.toUpperCase()).replace('{LANGNAME}',langName);
+  const convo=historyA.slice(-6).map(h=>(h.role==='user'?'Customer: ':'Bao Bao: ')+h.text).join('\n');
+  const prompt=sys+"\n\n===== KNOWLEDGE BASE =====\n"+KB_TEXT+"\n===== CONVERSATION =====\n"+convo+"\nCustomer: "+userText+"\nBao Bao:";
+  if(liveReady()){
+    try{
+      const r=await window.cowork.askClaude(prompt,[KB_TEXT]);
+      let out=typeof r==='string'?r:(r&&(r.text||r.content||r.output||r.response||r.completion))||'';
+      if(Array.isArray(out)) out=out.map(x=>x&&x.text?x.text:x).join(' ');
+      out=(out||'').toString().trim();
+      if(out){KRI.kb++;return out;}
+    }catch(e){}
+  }
+  if(API.key){
+    try{ const out=(await callGemini(prompt)).trim(); if(out){KRI.kb++;return out;} }catch(e){}
+  }
+  const fb=fallback(userText,LANG); KRI.kb++; return fb;
+}
+
+// ============ UI ============
+const chat=document.getElementById('chat'),input=document.getElementById('in'),chips=document.getElementById('chips'),sendBtn=document.getElementById('send');
+function esc2(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function setChips(arr){chips.innerHTML='';arr.forEach(c=>{const el=document.createElement('div');el.className='chip';el.textContent=c;el.onclick=()=>handle(c);chips.appendChild(el);});}
+function bubble(html,who){const row=document.createElement('div');row.className='row '+who;
+  const av=document.createElement('div');av.className='av2 '+(who==='bot'?'b':'u');av.textContent=who==='bot'?'🐻':'You';
+  const b=document.createElement('div');b.className='bub';b.innerHTML=html;row.appendChild(av);row.appendChild(b);
+  chat.appendChild(row);chat.scrollTop=chat.scrollHeight;return b;}
+function renderKRI(){
+  const vals=[KRI.msgs,KRI.tool,KRI.kb,KRI.oos,KRI.esc,KRI.vi,KRI.leads,KRI.upd];
+  document.getElementById('kgrid').innerHTML=UI[LANG].kris.map((l,i)=>'<div class="kpi"><div class="l">'+l+'</div><div class="v">'+vals[i]+'</div></div>').join('');
+  document.getElementById('kriTitle').textContent=UI[LANG].kriT;
+  document.getElementById('kriNote').textContent=UI[LANG].kriN;
+}
+async function handle(text){
+  text=text.trim(); if(!text) return;
+  if(text==='/ops'){document.getElementById('kriPanel').classList.toggle('show');renderKRI();input.value='';return;}
+  KRI.msgs++; if(/[ăâđêôơưàáảãạèéẻẽẹìíỉĩịòóỏõọùúủũụỳýỷỹỵ]/i.test(text)) KRI.vi++;
+  historyA.push({role:'user',text}); bubble(esc2(text),'user'); input.value='';
+  input.disabled=sendBtn.disabled=true;
+  const row=document.createElement('div');row.className='row bot';
+  row.innerHTML='<div class="av2 b">🐻</div><div class="bub typing">'+UI[LANG].typing+'<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>';
+  chat.appendChild(row);chat.scrollTop=chat.scrollHeight;
+  const reply=await answer(text);
+  historyA.push({role:'bot',text:reply.replace(/<[^>]+>/g,'')});
+  row.querySelector('.bub').classList.remove('typing'); row.querySelector('.bub').innerHTML=reply;
+  chat.scrollTop=chat.scrollHeight; input.disabled=sendBtn.disabled=false; input.focus(); renderKRI();
+}
+function setLang(l){
+  if(LANG===l) return; LANG=l; 
+  document.getElementById('btnEN').classList.toggle('on',l==='en');
+  document.getElementById('btnVI').classList.toggle('on',l==='vi');
+  if(!FLOW) journeyChips();
+  input.placeholder=UI[l].ph; document.getElementById('tagline').textContent=UI[l].tag; renderKRI();
+  bubble(l==='vi'?"Dạ, mình chuyển sang <b>tiếng Việt</b> nha! 🐻 Từ ngữ đời thường mình cũng hiểu.":"Switched to <b>English</b>! 🐻 Ask away.",'bot');
+}
+document.getElementById('btnEN').onclick=()=>setLang('en');
+document.getElementById('btnVI').onclick=()=>setLang('vi');
+sendBtn.onclick=()=>handle(input.value);
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!sendBtn.disabled)handle(input.value);});
+setChips(UI.en.startChips); input.placeholder=UI.en.ph; renderKRI();
+const badge=document.getElementById('mode');
+setTimeout(()=>{ badge.textContent = (liveReady()||API.key) ? '● Live AI' : '● Demo mode'; },300);
+bubble(UI.en.greet,'bot');
+</script>
+
+<div id="gate" style="position:fixed;inset:0;background:#faf8f6;z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;font-family:'Segoe UI',Arial,sans-serif;padding:20px;text-align:center;">
+  <div style="font-size:46px">🐻</div>
+  <div style="font-weight:700;color:#8B0000;font-size:18px">Bao Bao — private test</div>
+  <div style="font-size:13px;color:#555">Enter the test code Linh sent you<br>Nhập mã test Linh gửi bạn nha</div>
+  <div style="display:flex;gap:8px">
+    <input id="gateIn" type="text" placeholder="code…" style="border:1px solid #ccc;border-radius:9px;padding:9px 12px;font-size:14px;outline:none" onkeydown="if(event.key==='Enter')tryGate()">
+    <button onclick="tryGate()" style="background:#8B0000;color:#fff;border:none;border-radius:9px;padding:9px 16px;font-weight:600;cursor:pointer">Enter</button>
+  </div>
+</div>
+<script>
+function tryGate(){var v=document.getElementById('gateIn').value.trim().toLowerCase();
+ if(v==='baobao'){try{sessionStorage.setItem('bbgate','1')}catch(e){};document.getElementById('gate').remove();}
+ else{document.getElementById('gateIn').value='';document.getElementById('gateIn').placeholder='wrong code 🐻 thử lại nha';}}
+try{if(sessionStorage.getItem('bbgate')==='1'){document.getElementById('gate').remove();}}catch(e){}
+</script>
+
+</body>
+</html>
