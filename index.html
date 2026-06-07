@@ -710,5 +710,23 @@ bubble(UI.en.greet,'bot');
 
 
 <!-- BaoBao v2 — NBUW · full POS · campaigns · recruitment — built 07 Jun 2026 -->
+<div id="gateOv" style="position:fixed;inset:0;background:#faf8f6;z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;font-family:'Segoe UI',Arial,sans-serif;">
+  <div style="font-size:40px">🐻</div>
+  <div style="font-weight:700;color:#8B0000;font-size:16px">Bao Bao — BUS625 class demo</div>
+  <div style="font-size:13px;color:#6b7178">Enter the passcode to continue</div>
+  <input id="gateIn" type="password" style="border:1px solid #e6e3df;border-radius:10px;padding:9px 13px;font-size:14px;outline:none" placeholder="passcode">
+  <button id="gateBtn" style="background:#8B0000;color:#fff;border:none;border-radius:10px;padding:9px 22px;font-weight:600;cursor:pointer;font-size:14px">Enter</button>
+  <div id="gateErr" style="font-size:12px;color:#8B0000;visibility:hidden">Not quite — try again 🧸</div>
+</div>
+<script>
+(function(){var ov=document.getElementById('gateOv');
+ if(sessionStorage.getItem('bb_ok')==='1'){ov.remove();return;}
+ function go(){var v=(document.getElementById('gateIn').value||'').trim().toLowerCase();
+  if(v==='baobao'){sessionStorage.setItem('bb_ok','1');ov.remove();}
+  else{document.getElementById('gateErr').style.visibility='visible';}}
+ document.getElementById('gateBtn').onclick=go;
+ document.getElementById('gateIn').addEventListener('keydown',function(e){if(e.key==='Enter')go();});
+})();
+</script>
 </body>
 </html>
